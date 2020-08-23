@@ -1,8 +1,8 @@
-#' Criterion Pearson
+#' feature Pearson
 #'
 #' @return function
 #' @export
-criterion_pearson <- function(){
+feature_pearson <- function(){
  func <- function(dat){
   abs(stats::cor(dat[,1], dat[,2]))
  }
@@ -11,11 +11,11 @@ criterion_pearson <- function(){
  func
 }
 
-#' Criterion Kendall
+#' feature Kendall
 #'
 #' @return function
 #' @export
-criterion_kendall <- function(){
+feature_kendall <- function(){
  func <- function(dat){
   abs(stats::cor(dat[,1], dat[,2], method = "kendall"))
  }
@@ -24,11 +24,11 @@ criterion_kendall <- function(){
  func
 }
 
-#' Criterion Spearman
+#' feature Spearman
 #'
 #' @return non-negative numeric
 #' @export
-criterion_spearman <- function(){
+feature_spearman <- function(){
  func <- function(dat){
   abs(stats::cor(dat[,1] - 1e-4*seq_len(nrow(dat)),
                  dat[,2] + 1e-4*seq_len(nrow(dat)),
