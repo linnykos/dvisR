@@ -10,7 +10,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     MASS,
-    hash
+    hash,
+    xgboost
 Suggests:
     testthat
 RoxygenNote: 6.1.1

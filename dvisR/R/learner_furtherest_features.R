@@ -1,5 +1,5 @@
 # given vec (classifications with NA possibly) and mat (features), select an index
-.learner_furtherest_distance <- function(mat, vec, number_requested,
+learner_furtherest_distance <- function(mat, vec, number_requested,
                                          option_list){
  stopifnot(nrow(mat) == length(vec), number_requested > 0,
            sum(is.na(vec)) >= number_requested, sum(!is.na(vec)) > 0)
@@ -12,6 +12,8 @@
  dis_vec <- apply(dis, 2, function(x){mean(x) - stats::sd(x)})
  idx_unlabeled[order(dis_vec, decreasing = T)[1:number_requested]]
 }
+
+######################
 
 .distance_euclidean <- function(mat1, mat2){
  if(ncol(mat1) != ncol(mat2)) stop(paste("mat1 and mat2 must have the same",

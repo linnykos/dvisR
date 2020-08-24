@@ -17,6 +17,7 @@
 }
 
 # extract pairs of columns in pairs, and then apply the features
+## SHOULD INCLUDE A SAFETY TRYCATCH
 .extract_features <- function(dat, pairs, feature_list){
   mat_new <- apply(pairs, 2, function(x){
     dat_2col <- cbind(dat[,x[1]], dat[,x[2]])
@@ -34,4 +35,31 @@
 
   names(res) <- names(feature_list)
   res
+}
+
+####################################
+
+.initialize_feature_matrix <- function(ntrials, new_pairs_per_round,
+                                       minimum_instances_first_phase, feature_names){
+  est_row <- new_pairs_per_round[1]*minimum_instances_first_phase + new_pairs_per_round[2]*ntrials
+  mat <- as.data.frame(matrix(NA, nrow = est_row, ncol = length(feature_names)))
+  colnames(mat) <- feature_names
+  
+  mat
+}
+
+.update_feature_matrix <- function(mat, remaining_trials, new_pairs_per_round){
+  stopifnot(is.data.frame(mat))
+  if(any(is.na(mat[,1]))) return(mat)
+  
+  new_rows <- remaining_trials*new_pairs_per_round
+  mat <- rbind(mat, matrix(NA, nrow = new_rows, ncol = ncol(mat)))
+  stopifnot(is.data.frame(mat))
+  
+  mat
+}
+
+.clean_feature_matrix <- function(mat){
+  idx <- apply(mat, 1, function(x){!all(is.na(mat))})
+  mat[idx,,drop = F]
 }
