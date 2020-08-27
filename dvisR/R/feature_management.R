@@ -18,9 +18,9 @@
 
 # extract pairs of columns in pairs, and then apply the features
 ## SHOULD INCLUDE A SAFETY TRYCATCH
-.extract_features <- function(dat, pairs, feature_list){
-  mat_new <- apply(pairs, 2, function(x){
-    dat_2col <- cbind(dat[,x[1]], dat[,x[2]])
+.extract_features <- function(dat, pairs_mat, feature_list){
+  mat_new <- apply(pairs_mat, 2, function(pair){
+    dat_2col <- cbind(dat[,pair[1]], dat[,pair[2]])
     
     .apply_feature_list(dat_2col, feature_list)
   })
@@ -29,12 +29,12 @@
 }
 
 .apply_feature_list <- function(dat_2col, feature_list){
-  res_mat <- sapply(feature_list, function(feature_func){
-    feature_func(mat)
+  feature_vec <- sapply(feature_list, function(feature_func){
+    feature_func(dat_2col)
   })
 
-  names(res) <- names(feature_list)
-  res
+  names(feature_vec) <- names(feature_list)
+  feature_vec
 }
 
 ####################################
@@ -42,24 +42,40 @@
 .initialize_feature_matrix <- function(ntrials, new_pairs_per_round,
                                        minimum_instances_first_phase, feature_names){
   est_row <- new_pairs_per_round[1]*minimum_instances_first_phase + new_pairs_per_round[2]*ntrials
-  mat <- as.data.frame(matrix(NA, nrow = est_row, ncol = length(feature_names)))
-  colnames(mat) <- feature_names
+  feature_mat <- as.data.frame(matrix(NA, nrow = est_row, ncol = length(feature_names)))
+  colnames(feature_mat) <- feature_names
   
-  mat
+  feature_mat
 }
 
-.update_feature_matrix <- function(mat, remaining_trials, new_pairs_per_round){
-  stopifnot(is.data.frame(mat))
-  if(any(is.na(mat[,1]))) return(mat)
+.initial_response_vec <- function(ntrials, new_pairs_per_round,
+                                  minimum_instances_first_phase, feature_names){
+  est_row <- new_pairs_per_round[1]*minimum_instances_first_phase + new_pairs_per_round[2]*ntrials
+  rep(NA, est_row)
+}
+
+.update_feature_matrix <- function(feature_mat, remaining_trials, new_pairs_per_round){
+  stopifnot(is.data.frame(feature_mat))
+  if(any(is.na(feature_mat[,1]))) return(feature_mat)
   
   new_rows <- remaining_trials*new_pairs_per_round
-  mat <- rbind(mat, matrix(NA, nrow = new_rows, ncol = ncol(mat)))
-  stopifnot(is.data.frame(mat))
+  feature_mat <- rbind(feature_mat, matrix(NA, nrow = new_rows, ncol = ncol(feature_mat)))
+  stopifnot(is.data.frame(feature_mat))
   
-  mat
+  feature_mat
 }
 
-.clean_feature_matrix <- function(mat){
-  idx <- apply(mat, 1, function(x){!all(is.na(mat))})
-  mat[idx,,drop = F]
+.update_response_vec <- function(response_vec, feature_mat){
+  stopifnot(length(response_vec) <= nrow(feature_mat))
+  
+  if(length(response_vec) < nrow(feature_mat)){
+    response_vec <- c(response_vec, rep(NA, nrow(feature_mat) - length(response_vec)))
+  }
+  
+  response_vec
+}
+
+.clean_feature_matrix <- function(feature_mat){
+  idx <- apply(feature_mat, 1, function(x){!all(is.na(feature_mat))})
+  feature_mat[idx,,drop = F]
 }

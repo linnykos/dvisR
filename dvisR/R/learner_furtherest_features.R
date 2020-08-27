@@ -1,15 +1,15 @@
 # given vec (classifications with NA possibly) and mat (features), select an index
-learner_furtherest_distance <- function(mat, vec, number_requested,
+learner_furtherest_distance <- function(feature_mat, response_vec, number_requested,
                                          option_list){
- stopifnot(nrow(mat) == length(vec), number_requested > 0,
-           sum(is.na(vec)) >= number_requested, sum(!is.na(vec)) > 0)
+ stopifnot(nrow(feature_mat) == length(response_vec), number_requested > 0,
+           sum(is.na(response_vec)) >= number_requested, sum(!is.na(response_vec)) > 0)
  
- idx_unlabeled <- which(is.na(vec))
- mat_labeled <- mat[-idx_unlabeled,,drop = F]
- mat_unlabeled <- mat[idx_unlabeled,,drop = F]
+ idx_unlabeled <- which(is.na(response_vec))
+ mat_labeled <- feature_mat[-idx_unlabeled,,drop = F]
+ mat_unlabeled <- feature_mat[idx_unlabeled,,drop = F]
 
- dis <- .distance_euclidean(mat, mat_new)
- dis_vec <- apply(dis, 2, function(x){mean(x) - stats::sd(x)})
+ dis <- .distance_euclidean(mat_unlabeled, mat_labeled) ## CHECK THIS CORRECT ORDER
+ dis_vec <- apply(dis, 1, function(x){mean(x) - stats::sd(x)})
  idx_unlabeled[order(dis_vec, decreasing = T)[1:number_requested]]
 }
 
