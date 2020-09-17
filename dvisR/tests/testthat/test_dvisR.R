@@ -187,6 +187,21 @@ test_that(".response_listener_second_phase works over all 3 rounds", {
  }
 })
 
+############################################
+
+## dvisR_system is correct
+
+test_that("dvisR_system works", {
+  set.seed(10)
+  dat <- MASS::mvrnorm(n = 200, mu = rep(0, 50), Sigma = diag(50))
+  res <- dvisR_system(dat, system_options = system_options_default(ntrials = 10, minimum_instances_first_phase = 4,
+                                                                   classifier = classifier_xgboost_closure(verbose = 0)),
+                      debugging_inputs = list(round_inputs = list("1,2,3", "1,5,6", 
+                                                                  "y", "y", "y", "n", "y", "y", "n", "n", "n", "y")))
+  
+  expect_true(is.list(res))
+  expect_true(all(sort(names(res)) == sort(c("df", "classifier"))))
+})
 
 
 

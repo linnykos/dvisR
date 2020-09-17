@@ -2,7 +2,7 @@ Package: dvisR
 Title: Dependency Visualization
 Version: 0.0.0.0001
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: Something something something
+Description: An interactive system to visualize complex dependencies within the data.
 Depends:
     R (>= 3.3.0)
 License: MIT +file LICENSE
@@ -14,4 +14,4 @@ Imports:
     xgboost
 Suggests:
     testthat
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
