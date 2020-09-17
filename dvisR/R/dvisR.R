@@ -101,11 +101,13 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
 ####################
 
 .check_holistic <- function(dat, plotting_options){
- if(!all(is.na(plotting_options$color_vec))){
-  stopifnot(length(plotting_options$color_vec) == nrow(dat))
- }
- 
- invisible()
+  if(!all(is.na(plotting_options$color_vec))){
+    stopifnot(length(plotting_options$color_vec) == nrow(dat))
+  }
+  
+  stopifnot(is.matrix(dat) | is.data.frame(dat))
+  
+  invisible()
 }
 
 .plotter_first_phase <- function(dat, pairs_submat, plotting_options, plotting_module, i, debugging_inputs = NA, ...){
@@ -196,7 +198,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
 
 .response_listener_second_phase <- function(i, debugging_inputs){
   if((is.list(debugging_inputs)  || all(!is.na(debugging_inputs))) & length(debugging_inputs$round_inputs) >= 1){
-    response <- .response_handler_first_phase(debugging_inputs$round_inputs[[i]], number_requested)
+    response <- .response_handler_second_phase(debugging_inputs$round_inputs[[i]])
     
   } else {
     while(TRUE){
@@ -240,7 +242,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
   str <- gsub("[[:punct:]]", " ", str)
   str <- gsub("[[:alpha:]]", " ", str)
   str <- unlist(strsplit(str, split = " "))
-  str <- str[sapply(str, length) > 0]
+  str <- str[sapply(str, nchar) > 0]
   
   if(length(str) == 0) return(numeric(0))
   
