@@ -3,14 +3,22 @@ learner_furtherest_distance <- function(feature_mat, response_vec, number_reques
                                          option_list){
  stopifnot(nrow(feature_mat) == length(response_vec), number_requested > 0,
            all(!is.na(feature_mat)),
-           sum(is.na(response_vec)) >= number_requested, sum(!is.na(response_vec)) > 0)
+           sum(is.na(response_vec)) >= number_requested)
  
  idx_unlabeled <- which(is.na(response_vec))
- mat_labeled <- feature_mat[-idx_unlabeled,,drop = F]
- mat_unlabeled <- feature_mat[idx_unlabeled,,drop = F]
-
- res <- .rescale_and_separate(mat_unlabeled, mat_labeled)
- dis <- .distance_euclidean(res$mat1, res$mat2) 
+ 
+ if(length(idx_unlabeled) == length(response_vec)){
+   mat <- scale(feature_mat)
+   dis <- as.matrix(stats::dist(mat))
+     
+ } else {
+   mat_labeled <- feature_mat[-idx_unlabeled,,drop = F]
+   mat_unlabeled <- feature_mat[idx_unlabeled,,drop = F]
+   
+   res <- .rescale_and_separate(mat_unlabeled, mat_labeled)
+   dis <- .distance_euclidean(res$mat1, res$mat2) 
+ }
+ 
  dis_vec <- apply(dis, 1, function(x){mean(x) - stats::sd(x)})
  idx_unlabeled[order(dis_vec, decreasing = T)[1:number_requested]]
 }

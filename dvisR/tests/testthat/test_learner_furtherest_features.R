@@ -66,3 +66,18 @@ test_that("learner_furtherest_distance works", {
  expect_true(all(res <= nrow(feature_mat)))
  expect_true(all(is.na(response_vec[res])))
 })
+
+test_that("learner_furtherest_distance works with nothing is labeled", {
+  feature_mat <- matrix(stats::rnorm(100), nrow = 20, ncol = 5)
+  response_vec <- rep(NA, 20)
+  number_requested <- 5
+  option_list <- NA
+  
+  res <- learner_furtherest_distance(feature_mat, response_vec, number_requested, option_list)
+  
+  expect_true(length(res) == number_requested)
+  expect_true(is.numeric(res))
+  expect_true(all(res > 0))
+  expect_true(all(res <= nrow(feature_mat)))
+  expect_true(all(is.na(response_vec[res])))
+})

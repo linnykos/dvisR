@@ -3,7 +3,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
                          system_options = system_options_default(), 
                          plotting_options = plotting_options_default(),  
                          plotting_module = plotting_module_base,
-                         debugging_inputs = list(NA), verbose = 1, ...){
+                         debugging_inputs = NA, verbose = 1, ...){
  
  if(!is.all(is.na(cluster_labels))) stopifnot(nrow(dat) == length(cluster_labels))
  .check_holistic(dat, plotting_options)
@@ -30,14 +30,14 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
   stopifnot(nrow(feature_mat) == length(response_vec), length(response_vec) == length(round_vec)) 
    
   # sample new pairs
-  counter <- hash[["count"]]
+  counter <- hash_pairs[["count"]]
   # check to see if we need to expand feature_mat and others
   if(!is.na(feature_mat[counter+1,1])){
     feature_mat <- .expand_feature_matrix(feature_mat)
     response_vec <- .expand_response_vec(response_vec)
     round_vec <- .expand_response_vec(round_vec)
   }
-  pairs_mat_new <- .generate_new_pairs(p, so$new_pairs_per_round, hash_pairs)
+  pairs_mat_new <- .generate_new_pairs(p, so$new_pairs_per_round[phase_counter], hash_pairs)
   
   # extract features of new pairs
   feature_mat_tmp <- .extract_features(dat, pairs_mat_new, fl)
@@ -45,14 +45,16 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
    feature_mat_tmp <- .clean_na(feature_mat_tmp, hash_na, offset = counter)
   }
   feature_mat[(counter+1):(counter+nrow(feature_mat_tmp)),] <- feature_mat_tmp
-  hash[["count"]] <- counter+nrow(feature_mat_tmp)
+  hash_pairs[["count"]] <- counter+nrow(feature_mat_tmp)
   
   pairs_mat <- rbind(pairs_mat, pairs_mat_new)
   
   # do phase 1 learning -- user label multiple plots at once
   if(phase_counter == 1){
-   idx_vec <- so$learner_list$first_learner(feature_mat, response_vec, number_requested = number_requested,
-                                         options = so$learner_options$first_learner)
+   idx_vec <- so$learner_list$first_learner(feature_mat[1:hash_pairs[["count"]],], 
+                                            response_vec[1:hash_pairs[["count"]]], 
+                                            number_requested = number_requested,
+                                            option_list = so$learner_options$first_learner)
    idx_vec <- sort(idx_vec)
    .check_indices(idx_vec, pairs_mat, hash_pairs)
    
@@ -69,8 +71,10 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
   # do phase 2 learning -- user labels one plot at a time
   else if(phase_counter == 2){
    # find which to display
-   idx <- so$learner_list$second_learner(feature_mat, response_vec, number_requested = 1,
-                                         options = so$learner_options$second_learner)
+   idx <- so$learner_list$second_learner(feature_mat[1:hash_pairs[["count"]],], 
+                                         response_vec[1:hash_pairs[["count"]]], 
+                                         number_requested = 1,
+                                         option_list = so$learner_options$second_learner)
    .check_indices(idx, pairs_mat, hash_pairs)
    
    ## plot according to filter
@@ -83,6 +87,11 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
    round_idx[idx] <- round_idx
   }
    
+  # cleanup
+  if(phase_counter == 1 & sum(is.na(response_vec[1:hash_pairs[["count"]]])) >= minimum_instances_first_phase &
+     sum(!is.na(response_vec[1:hash_pairs[["count"]]])) >= minimum_instances_first_phase){
+    phase_counter <- 2
+  }
   round_idx <- round_idx+1
  }
  
@@ -133,7 +142,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
   }
   
   plotting_module(x = dat[,pairs_submat[j,1]], y = dat[,pairs_submat[j,2]], xlab = xlab, ylab = ylab,
-                  main = paste0("Round ", i, ": Plot #", j), color_vec = color_vec, ...)
+                  main = paste0("Round ", i, ": Plot #", j), col = color_vec, ...)
  }
  
  invisible()

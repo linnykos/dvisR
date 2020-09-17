@@ -4,6 +4,7 @@ context("Test system backend")
 
 test_that(".check_system_options works", {
  classifier <- classifier_xgboost_closure()
+ ntrials <- 5
  learner_list <- list(first_learner = learner_furtherest_distance, 
                      second_learner = learner_furtherest_distance)
  learner_options <- list(first_learner = NA, 
@@ -11,7 +12,7 @@ test_that(".check_system_options works", {
  new_pairs_per_round <- c(20,10)
  minimum_instances_first_phase <- 10
  
- res <- .check_system_options(classifier, learner_list, learner_options, new_pairs_per_round, 
+ res <- .check_system_options(classifier, ntrials, learner_list, learner_options, new_pairs_per_round, 
                               minimum_instances_first_phase)
  
  expect_true(length(res) == 0)
