@@ -10,7 +10,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
   p <- ncol(dat)
   
   # preprocessing, initialization stuff
-  hash_pairs <- hash::hash(); .initialize_hash(hash_pairs)
+  hash_pairs <- .initialize_hash(); hash_na <- .initialize_na_handler()
   feature_mat <- .initialize_feature_matrix(so$ntrials, so$new_pairs_per_round,
                                     so$minimum_instances_first_phase, names(fl))
   pairs_mat <- matrix(NA, nrow = 0, ncol = 2)
@@ -29,7 +29,12 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
     # extract features of new pairs
     if(verbose) message("MESSAGE")
     feature_mat_tmp <- .extract_features(dat, pairs_mat_new, fl)
+    if(any(is.na(feature_mat_tmp))){
+      feature_mat_tmp <- .clean_na(feature_mat_tmp, hash_na, offset = counter)
+    }
     feature_mat[(counter+1):(counter+nrow(feature_mat_tmp)),] <- feature_mat_tmp
+    hash[["count"]] <- counter+nrow(feature_mat_tmp)
+    
     pairs_mat <- rbind(pairs_mat, pairs_mat_new)
     
     if(phase_counter == 1){
@@ -63,6 +68,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
   classifier <- system_options$classifier(data = mat, label = vec)
   
   # prepare output
+  # RESTORE NA'S
   .construct_dvisR(classifier = classifier)
 }
 

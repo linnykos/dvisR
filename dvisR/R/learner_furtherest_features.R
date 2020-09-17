@@ -2,13 +2,15 @@
 learner_furtherest_distance <- function(feature_mat, response_vec, number_requested,
                                          option_list){
  stopifnot(nrow(feature_mat) == length(response_vec), number_requested > 0,
+           all(!is.na(feature_mat)),
            sum(is.na(response_vec)) >= number_requested, sum(!is.na(response_vec)) > 0)
  
  idx_unlabeled <- which(is.na(response_vec))
  mat_labeled <- feature_mat[-idx_unlabeled,,drop = F]
  mat_unlabeled <- feature_mat[idx_unlabeled,,drop = F]
 
- dis <- .distance_euclidean(mat_unlabeled, mat_labeled) ## CHECK THIS CORRECT ORDER
+ res <- .rescale_and_separate(mat_unlabeled, mat_labeled)
+ dis <- .distance_euclidean(res$mat1, res$mat2) 
  dis_vec <- apply(dis, 1, function(x){mean(x) - stats::sd(x)})
  idx_unlabeled[order(dis_vec, decreasing = T)[1:number_requested]]
 }
@@ -18,10 +20,6 @@ learner_furtherest_distance <- function(feature_mat, response_vec, number_reques
 .distance_euclidean <- function(mat1, mat2){
  if(ncol(mat1) != ncol(mat2)) stop(paste("mat1 and mat2 must have the same",
                                          "number of columns"))
- 
- res <- .rescale_and_separate(mat1, mat2)
- mat1 <- res$mat1; mat2 <- res$mat2
- 
  n1 <- nrow(mat1); n2 <- nrow(mat2)
  
  if(n1 < n2){
@@ -31,21 +29,18 @@ learner_furtherest_distance <- function(feature_mat, response_vec, number_reques
  }
  
  dis <- matrix(0, nrow = nrow(mat_big), ncol = nrow(mat_small))
+ tmat_big <- t(mat_big)
  for(i in 1:ncol(dis)){
-  dis[,i] <- sqrt(rowSums(t((mat_small[i,] - t(mat_big))^2)))
+  dis[,i] <- sqrt(colSums((mat_small[i,] - tmat_big)^2))
  }
  
  if(n1 < n2) dis <- t(dis)
  
+ stopifnot(nrow(dis) == n1, ncol(dis) == n2)
  dis
 }
 
-.remove_na_rows <- function(mat){
- mat[which(apply(mat, 1, function(x){all(!is.na(x))})),,drop = F]
-}
-
 .rescale_and_separate <- function(mat1, mat2){
- mat1 <- .remove_na_rows(mat1); mat2 <- .remove_na_rows(mat2)
  
  n1 <- nrow(mat1); n2 <- nrow(mat2)
  mat_all <- rbind(mat1, mat2)

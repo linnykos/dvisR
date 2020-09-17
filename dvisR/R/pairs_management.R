@@ -22,12 +22,12 @@
   pairs_mat
 }
 
-.initialize_hash <- function(existing_hash){
-  stopifnot(class(existing_hash) == "hash")
+.initialize_hash <- function(){
+  hash_obj <- hash::hash()
   
-  if(is.null(existing_hash[["count"]])) {
-    existing_hash[["count"]] <- 0
+  if(is.null(hash_obj[["count"]])) {
+    hash_obj[["count"]] <- 0
   }
   
-  invisible()
+  hash_obj
 }
