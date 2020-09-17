@@ -40,5 +40,5 @@ test_that("feature_spearman works", {
  expect_true(is.numeric(res))
  expect_true(length(res) == 1)
  expect_true(res <= 1)
- expect_true(res >= -1)
+ expect_true(res >= -1) 
 })

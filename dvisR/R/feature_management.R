@@ -4,22 +4,35 @@
  if(!isNamespaceLoaded(package_name)) stop(paste(package_name, "is not",
                                                  "currently loaded"))
  
- all.obj <- ls(paste0("package:", package_name))
+ all_obj <- ls(paste0("package:", package_name))
  
- fun <- grep(paste0("^", function_starter, "_*"), all.obj, value = T)
+ fun <- grep(paste0("^", function_starter, "_*"), all_obj, value = T)
  
  lis <- lapply(fun, function(x){
-  eval(parse(text = paste0(package_name, "::", x)))
+  eval(parse(text = paste0(package_name, "::", x)))()
  })
- names(lis) <- fun
+ 
+ name_vec <- sapply(lis, function(x){tmp <- attr(x, "id"); if(!is.null(tmp)) tmp else ""})
+ 
+ # handling if nulls appear
+ if(any(sapply(name_vec, nchar) == 0)){
+   idx <- which(sapply(name_vec, nchar) == 0)
+   len_null <- length(grep("NULL*", name_vec[-idx]))
+   name_vec[idx] <- paste0("NULL_", (len_null+1):(len_null+length(idx)))
+ }
+ 
+ stopifnot(length(unique(name_vec)) == length(name_vec))
+ names(lis) <- name_vec
  
  lis
 }
 
 # extract pairs of columns in pairs, and then apply the features
-## SHOULD INCLUDE A SAFETY TRYCATCH
 .extract_features <- function(dat, pairs_mat, feature_list){
-  mat_new <- apply(pairs_mat, 2, function(pair){
+  stopifnot(ncol(pairs_mat) == 2, max(pairs_mat) <= ncol(dat), 
+            all(pairs_mat %% 1 == 0), min(pairs_mat) > 0)
+  
+  mat_new <- apply(pairs_mat, 1, function(pair){
     dat_2col <- cbind(dat[,pair[1]], dat[,pair[2]])
     
     .apply_feature_list(dat_2col, feature_list)
@@ -30,7 +43,11 @@
 
 .apply_feature_list <- function(dat_2col, feature_list){
   feature_vec <- sapply(feature_list, function(feature_func){
-    feature_func(dat_2col)
+    tryCatch({
+      feature_func(dat_2col)
+    }, error = function(e){
+      NA
+    })
   })
 
   names(feature_vec) <- names(feature_list)
