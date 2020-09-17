@@ -9,7 +9,7 @@ system_options_default <- function(classifier = classifier_xgboost_closure(), nt
  
  list(classifier = classifier, ntrials = ntrials, learner_list = learner_list,
       learner_options = learner_options, new_pairs_per_round = new_pairs_per_round,
-      minimum_instances_first_phase = minimum_instances_first_phase)
+      min_inst = minimum_instances_first_phase)
 }
 
 ######################

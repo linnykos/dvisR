@@ -123,6 +123,18 @@ test_that(".response_listener_first_phase works", {
  expect_true(all(res == c(1,1,1,0,0,0,0,0,0)))
 })
 
+test_that(".response_listener_first_phase can handle no input", {
+  i <- 2
+  number_requested <- 9
+  debugging_inputs <- list(round_inputs = list(c("1,4,6,2"), c(""), c("5")))
+  
+  res <- .response_listener_first_phase(i, number_requested, debugging_inputs)
+  
+  expect_true(is.numeric(res))
+  expect_true(length(res) == number_requested)
+  expect_true(all(res == rep(0,number_requested)))
+})
+
 test_that(".response_listener_first_phase over all 3 rounds", {
  i <- 2
  number_requested <- 9
@@ -151,6 +163,16 @@ test_that(".response_listener_second_phase works", {
  expect_true(is.numeric(res))
  expect_true(length(res) == 1)
  expect_true(res == 0)
+})
+
+test_that(".response_listener_second_phase can handle no input", {
+  i <- 2
+  debugging_inputs <- list(round_inputs = list("y", "", "y"))
+  res <- .response_listener_second_phase(i, debugging_inputs)
+  
+  expect_true(is.numeric(res))
+  expect_true(length(res) == 1)
+  expect_true(res == 0)
 })
 
 test_that(".response_listener_second_phase works over all 3 rounds", {

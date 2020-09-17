@@ -32,7 +32,7 @@
   hash_obj
 }
 
-.check_indices <- function(idx_vec, pairs_mat, hash_pairs){
+.check_indices <- function(idx_vec, pairs_mat, response_vec, hash_pairs){
   for(i in 1:length(idx_vec)){
     idx <- idx_vec[i]
     pair_vec <- pairs_mat[idx,]
