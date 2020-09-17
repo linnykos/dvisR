@@ -14,11 +14,11 @@
  
  name_vec <- sapply(lis, function(x){tmp <- attr(x, "id"); if(!is.null(tmp)) tmp else ""})
  
- # handling if nulls appear
+ # handling if NULLs appear
  if(any(sapply(name_vec, nchar) == 0)){
    idx <- which(sapply(name_vec, nchar) == 0)
-   len_null <- length(grep("NULL*", name_vec[-idx]))
-   name_vec[idx] <- paste0("NULL_", (len_null+1):(len_null+length(idx)))
+   len_NA <- length(grep("NULL*", name_vec[-idx]))
+   name_vec[idx] <- paste0("NULL_", (len_NA+1):(len_NA+length(idx)))
  }
  
  stopifnot(length(unique(name_vec)) == length(name_vec))
@@ -58,6 +58,10 @@
 
 .initialize_feature_matrix <- function(ntrials, new_pairs_per_round,
                                        minimum_instances_first_phase, feature_names){
+  stopifnot(length(new_pairs_per_round) == 2, all(new_pairs_per_round >= 1), all(new_pairs_per_round %% 1 == 0),
+            length(ntrials) == 1, ntrials >= 1, ntrials %% 1 == 0,
+            length(minimum_instances_first_phase) == 1, minimum_instances_first_phase >= 1, minimum_instances_first_phase %% 1 == 0)
+  
   est_row <- new_pairs_per_round[1]*minimum_instances_first_phase + new_pairs_per_round[2]*ntrials
   feature_mat <- as.data.frame(matrix(NA, nrow = est_row, ncol = length(feature_names)))
   colnames(feature_mat) <- feature_names
@@ -66,23 +70,25 @@
 }
 
 .initial_response_vec <- function(ntrials, new_pairs_per_round,
-                                  minimum_instances_first_phase, feature_names){
+                                  minimum_instances_first_phase){
   est_row <- new_pairs_per_round[1]*minimum_instances_first_phase + new_pairs_per_round[2]*ntrials
+  
   rep(NA, est_row)
 }
 
-.update_feature_matrix <- function(feature_mat, remaining_trials, new_pairs_per_round){
-  stopifnot(is.data.frame(feature_mat))
-  if(any(is.na(feature_mat[,1]))) return(feature_mat)
+.expand_feature_matrix <- function(feature_mat, scaling = 1.2){
+  stopifnot(is.data.frame(feature_mat), scaling > 1)
   
-  new_rows <- remaining_trials*new_pairs_per_round
-  feature_mat <- rbind(feature_mat, matrix(NA, nrow = new_rows, ncol = ncol(feature_mat)))
+  new_rows <- ceiling((scaling-1) * nrow(feature_mat))
+  tmp_mat <- matrix(NA, nrow = new_rows, ncol = ncol(feature_mat))
+  colnames(tmp_mat) <- colnames(feature_mat)
+  feature_mat <- rbind(feature_mat, tmp_mat)
   stopifnot(is.data.frame(feature_mat))
   
   feature_mat
 }
 
-.update_response_vec <- function(response_vec, feature_mat){
+.expand_response_vec <- function(response_vec, feature_mat){
   stopifnot(length(response_vec) <= nrow(feature_mat))
   
   if(length(response_vec) < nrow(feature_mat)){
@@ -93,6 +99,12 @@
 }
 
 .clean_feature_matrix <- function(feature_mat){
-  idx <- apply(feature_mat, 1, function(x){!all(is.na(feature_mat))})
+  idx <- apply(feature_mat, 1, function(x){!all(is.na(x))})
   feature_mat[idx,,drop = F]
 }
+
+
+.clean_response_vec <- function(response_vec, feature_mat){
+  response_vec[1:nrow(feature_mat)]
+}
+
