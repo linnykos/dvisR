@@ -63,7 +63,7 @@
             length(minimum_instances_first_phase) == 1, minimum_instances_first_phase >= 1, minimum_instances_first_phase %% 1 == 0)
   
   est_row <- new_pairs_per_round[1]*minimum_instances_first_phase + new_pairs_per_round[2]*ntrials
-  feature_mat <- as.data.frame(matrix(NA, nrow = est_row, ncol = length(feature_names)))
+  feature_mat <- matrix(NA, nrow = est_row, ncol = length(feature_names))
   colnames(feature_mat) <- feature_names
   
   feature_mat
@@ -77,13 +77,13 @@
 }
 
 .expand_feature_matrix <- function(feature_mat, scaling = 1.2){
-  stopifnot(is.data.frame(feature_mat), scaling > 1)
+  stopifnot(is.matrix(feature_mat), scaling > 1)
   
   new_rows <- ceiling((scaling-1) * nrow(feature_mat))
   tmp_mat <- matrix(NA, nrow = new_rows, ncol = ncol(feature_mat))
   colnames(tmp_mat) <- colnames(feature_mat)
   feature_mat <- rbind(feature_mat, tmp_mat)
-  stopifnot(is.data.frame(feature_mat))
+  stopifnot(is.matrix(feature_mat))
   
   feature_mat
 }

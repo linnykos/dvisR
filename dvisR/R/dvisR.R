@@ -1,8 +1,8 @@
 dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
                          feature_list = .grab_functions_in_package(),
                          system_options = system_options_default(), 
-                         plotting_options = list(NA), 
-                         debugging_inputs = list(NA), verbose = T, ...){
+                         plotting_options = list(NA),  ## CREATE SEPERATE PLOTTING MODULE AS WELL
+                         debugging_inputs = list(NA), verbose = 1, ...){
   
   if(!is.all(is.na(cluster_labels))) stopifnot(nrow(dat) == length(cluster_labels))
   

@@ -15,11 +15,13 @@ system_options_default <- function(classifier = classifier_xgboost_closure(), nt
 ######################
 
 .check_system_options <- function(classifier, learner_list, learner_options, new_pairs_per_round, minimum_instances_first_phase){
- stopifnot(is.function(classifier))
+ stopifnot(is.function(classifier), all(sapply(learner_list, is.function)))
  
  stopifnot(length(new_pairs_per_round) == 2, is.numeric(new_pairs_per_round), !is.matrix(new_pairs_per_round),
            all(new_pairs_per_round > 0), all(new_pairs_per_round %% 1 == 0))
  
  stopifnot(length(minimum_instances_first_phase) == 1, is.numeric(minimum_instances_first_phase), !is.matrix(minimum_instances_first_phase),
            minimum_instances_first_phase > 0, minimum_instances_first_phase %% 1 == 0)
+ 
+ invisible()
 }
