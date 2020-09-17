@@ -11,7 +11,7 @@ LazyData: true
 Imports:
     MASS,
     hash,
-    xgboost
+    xgboost 
 Suggests:
     testthat
 RoxygenNote: 7.1.1

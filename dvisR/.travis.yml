@@ -1,0 +1,16 @@
+language: r
+
+before_install:
+  - cd dvisR
+
+cache: packages
+
+r_binary_packages:
+    - MASS
+    - hasah
+    - xgboost
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'
+
+warnings_are_errors: true
