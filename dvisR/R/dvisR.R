@@ -128,7 +128,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
  }
  
  graphics::par(mfrow = plotting_options$first_phase_gridsize)
- 
+  
  for(j in 1:nrow(pairs_submat)){
   if(plotting_options$axis_labels){
    xlab <- colnames(dat)[pairs_submat[j,1]]; ylab <- colnames(dat)[pairs_submat[j,2]]
