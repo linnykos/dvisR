@@ -6,7 +6,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
                          debugging_inputs = NA, verbose = 1, ...){
  
  if(!all(is.na(cluster_labels))) stopifnot(nrow(dat) == length(cluster_labels))
- .check_holistic(dat, plotting_options)
+ .check_holistic(dat, feature_list, plotting_options)
   
  fl <- feature_list; so <- system_options; po <- plotting_options; pm <- plotting_module
  di <- debugging_inputs
@@ -109,16 +109,6 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
 }
 
 ####################
-
-.check_holistic <- function(dat, plotting_options){
-  if(!all(is.na(plotting_options$color_vec))){
-    stopifnot(length(plotting_options$color_vec) == nrow(dat))
-  }
-  
-  stopifnot(is.matrix(dat) | is.data.frame(dat))
-  
-  invisible()
-}
 
 .plotter_first_phase <- function(dat, pairs_submat, plotting_options, plotting_module, i, debugging_inputs = NA, ...){
   if(is.list(debugging_inputs) || all(!is.na(debugging_inputs))) return(invisible())
@@ -239,30 +229,3 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
   
   response
 }
-
-#####################
-
-.construct_dvisR <- function(feature_mat, response_vec, pairs_mat, round_vec, 
-                             classifier, system_options){
-  stopifnot(nrow(feature_mat) == length(response_vec), length(response_vec) == nrow(pairs_mat))
-  
-  df <- as.data.frame(cbind(pairs_mat, response_vec, round_vec, feature_mat))
-  colnames(df) <- c("Idx1", "Idx2", "Response", "Round", colnames(feature_mat))
-  
-  structure(list(df = df, classifier = classifier), class = "dvisR")
-}
-
-.string_parser <- function(str){
-  str <- gsub("[[:punct:]]", " ", str)
-  str <- gsub("[[:alpha:]]", " ", str)
-  str <- unlist(strsplit(str, split = " "))
-  str <- str[sapply(str, nchar) > 0]
-  
-  if(length(str) == 0) return(numeric(0))
-  
-  as.numeric(str)
-}
- 
- 
- 
- 

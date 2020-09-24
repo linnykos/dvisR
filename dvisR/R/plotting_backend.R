@@ -14,8 +14,10 @@ plotting_options_default <- function(color_vec = NA, axis_labels = T, first_phas
       second_subsampling_options = second_subsampling_options)
 }
 
-plotting_module_base <- function(x, y, xlab, ylab, main, col, ...){
- graphics::plot(x = x, y = y, xlab = xlab, ylab = ylab, main = main, col = col, ...)
+plotting_module_base <- function(x, y, xlab, ylab, main, col, pch = 16, ...){
+   stopifnot(length(y) == length(x))
+   stopifnot(length(col) == 1 || length(col) == length(x))
+   graphics::plot(x = x, y = y, xlab = xlab, ylab = ylab, main = main, col = col, pch = 16, ...)
 }
 
 ##############
