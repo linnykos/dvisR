@@ -24,13 +24,15 @@
 
 
 .construct_dvisR <- function(feature_mat, response_vec, pairs_mat, round_vec, 
+                             n, p, 
                              classifier, system_options){
    stopifnot(nrow(feature_mat) == length(response_vec), length(response_vec) == nrow(pairs_mat))
    
    df <- as.data.frame(cbind(pairs_mat, response_vec, round_vec, feature_mat))
    colnames(df) <- c("Idx1", "Idx2", "Response", "Round", colnames(feature_mat))
+   dim_vec <- c(n,p); names(dim_vec) <- c("n", "p")
    
-   structure(list(df = df, classifier = classifier), class = "dvisR")
+   structure(list(df = df, classifier = classifier, dim = dim_vec), class = "dvisR")
 }
 
 .string_parser <- function(str){
