@@ -7,6 +7,8 @@ print.dvisR <- function(x, verbose = 0, ...){
   cat(sprintf("Plots labeled without pattern of interest: %d\n", length(which(x$df$Response == 0))))
   cat(sprintf("Plots unlabeled: %d\n", sum(is.na(x$df$Response))))
   cat("\n--------\n")
+  cat("Classifier is of class ", class(x$classifier))
+  cat("\n--------\n")
   cat("Names within object:\n")
   print(names(x))
   
