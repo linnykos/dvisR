@@ -5,9 +5,14 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
                          plotting_module = plotting_module_base,
                          debugging_inputs = NA, verbose = 1, ...){
  
- if(!all(is.na(cluster_labels))) stopifnot(nrow(dat) == length(cluster_labels))
- .check_holistic(dat, feature_list, plotting_options)
-  
+ if(!all(is.na(cluster_labels))) {
+   stopifnot(nrow(dat) == length(cluster_labels))
+   if(length(plotting_options$color_palette) == 1){
+     plotting_options$color_palette <- col_palette_default(length(unique(cluster_labels)))
+   }
+ }
+ .check_holistic(dat, cluster_labels, feature_list, plotting_options)
+
  fl <- feature_list; so <- system_options; po <- plotting_options; pm <- plotting_module
  di <- debugging_inputs
  n <- nrow(dat); p <- ncol(dat)
@@ -60,7 +65,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
    
    ## plot according to filter
    pairs_submat <- pairs_mat[idx_vec,]
-   .plotter_first_phase(dat, pairs_submat, plotting_options = po, plotting_module = pm, i = round_idx, 
+   .plotter_first_phase(dat, pairs_submat, cluster_labels, plotting_options = po, plotting_module = pm, i = round_idx, 
                         debugging_inputs = di, ...)
    
    ## display and listen
@@ -79,7 +84,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
    
    ## plot according to filter
    pair_vec <- pairs_mat[idx,]
-   .plotter_second_phase(dat, pair_vec, plotting_options = po, plotting_module = pm, i = round_idx, 
+   .plotter_second_phase(dat, pair_vec, cluster_labels, plotting_options = po, plotting_module = pm, i = round_idx, 
                          offset = round_phase2_start, debugging_inputs = di, ...)
    
    ## display and listen
@@ -110,7 +115,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
 
 ####################
 
-.plotter_first_phase <- function(dat, pairs_submat, plotting_options, plotting_module, i, debugging_inputs = NA, ...){
+.plotter_first_phase <- function(dat, pairs_submat, cluster_labels, plotting_options, plotting_module, i, debugging_inputs = NA, ...){
   if(is.list(debugging_inputs) || all(!is.na(debugging_inputs))) return(invisible())
   
   if(!all(is.na(plotting_options$first_mar))){
@@ -126,10 +131,10 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
    xlab <- ""; ylab <- ""
   }
   
-  if(length(plotting_options$color_vec) == 1 && all(is.na(plotting_options$color_vec))){
-   color_vec <- "black"
+  if(length(cluster_labels) == 1 && all(is.na(cluster_labels))){
+   color_vec <- rep(plotting_options$color_palette[1], nrow(dat))
   } else{
-   color_vec <- plotting_options$color_vec
+   color_vec <- plotting_options$color_palette[cluster_labels]
   }
   
   plotting_module(x = dat[,pairs_submat[j,1]], y = dat[,pairs_submat[j,2]], xlab = xlab, ylab = ylab,
@@ -139,7 +144,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
  invisible()
 }
 
-.plotter_second_phase <- function(dat, pair_vec, plotting_options, plotting_module, i, offset,
+.plotter_second_phase <- function(dat, pair_vec, cluster_labels, plotting_options, plotting_module, i, offset,
                                   debugging_inputs = NA, ...){
   if(is.list(debugging_inputs)  || all(!is.na(debugging_inputs))) return(invisible())
   
@@ -155,10 +160,10 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
     xlab <- ""; ylab <- ""
   }
   
-  if(length(plotting_options$color_vec) == 1 && all(is.na(plotting_options$color_vec))){
-    color_vec <- "black"
+  if(length(cluster_labels) == 1 && all(is.na(cluster_labels))){
+    color_vec <- rep(plotting_options$color_palette[1], nrow(dat))
   } else{
-    color_vec <- plotting_options$color_vec
+    color_vec <- plotting_options$color_palette[cluster_labels]
   }
   
   plotting_module(x = dat[,pair_vec[1]], y = dat[,pair_vec[2]], xlab = xlab, ylab = ylab,

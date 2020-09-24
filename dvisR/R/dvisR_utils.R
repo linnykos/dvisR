@@ -1,8 +1,9 @@
-.check_holistic <- function(dat, feature_list, plotting_options){
+.check_holistic <- function(dat, cluster_labels, feature_list, plotting_options){
    if(!all(is.na(plotting_options$color_vec))){
       stopifnot(length(plotting_options$color_vec) == nrow(dat))
    }
    
+   if(!all(is.na(cluster_labels))) stopifnot(length(plotting_options$color_palette) == length(unique(cluster_labels)))
    stopifnot(length(feature_list) > 1, all(sapply(feature_list, is.function)))
    stopifnot(is.matrix(dat) | is.data.frame(dat))
    

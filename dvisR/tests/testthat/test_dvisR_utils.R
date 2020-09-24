@@ -4,30 +4,33 @@ context("Test dvisR utils")
 
 test_that(".check_holistic works", {
  dat <- matrix(1:30,6,5)
+ cluster_labels <- NA
  feature_list <- .grab_functions_in_package()
  plotting_options <- plotting_options_default()
  
- res <- .check_holistic(dat, feature_list, plotting_options)
+ res <- .check_holistic(dat, cluster_labels, feature_list, plotting_options)
  
  expect_true(length(res) == 0)
 })
 
 test_that(".check_holistic works with colors", {
  dat <- matrix(1:30,6,5)
+ cluster_labels <- NA
  feature_list <- .grab_functions_in_package()
- plotting_options <- plotting_options_default(color_vec = c(1:6))
+ plotting_options <- plotting_options_default(color_palette = c(1:6))
  
- res <- .check_holistic(dat,  feature_list, plotting_options)
+ res <- .check_holistic(dat, cluster_labels, feature_list, plotting_options)
  
  expect_true(length(res) == 0)
 })
 
-test_that(".check_holistic works can error", {
+test_that(".check_holistic works can error due to cluster_labels not agreeing with color_palette", {
  dat <- matrix(1:30,6,5)
+ cluster_labels <- 1:6
  feature_list <- .grab_functions_in_package()
- plotting_options <- plotting_options_default(color_vec = c(1:5))
+ plotting_options <- plotting_options_default(color_palette = c(1:5))
  
- expect_error(.check_holistic(dat, feature_list, plotting_options))
+ expect_error(.check_holistic(dat, cluster_labels, feature_list, plotting_options))
 })
 
 ##########################

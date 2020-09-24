@@ -20,8 +20,10 @@ dvisR_embedding <- function(obj, embedding_method = embedding_pca, highlight_var
   }
   col_vec <- col_palette[tmp]
   
+  ordering <- rep(1, nrow(embedding_mat))
+  ordering[!is.na(res$response_vec)] <- 2
   plotting_module(x = embedding_mat[,1], y = embedding_mat[,2], xlab = xlab, ylab = ylab,
-                  main = main, col = col_vec, ...)
+                  main = main, col = col_vec, ordering = ordering, ...)
   
   invisible()
 }
