@@ -1,8 +1,8 @@
+# WARNING: Add feature_spacing eventually, add feature names, etc.
 dvisR_heatmap <- function(obj, reorder_feature = T, predictions = T, unlabeled = F,
                           size_func = heatmap_size_func_default,
                           prediction_func = predict_xgboost_wrapper,
-                          feature_spacing = 5, ylab = NA,
-                          par_list = heatmap_par_list_default()){
+                          ylab = NA, par_list = heatmap_par_list_default()){
  
  res <- .extract_mat_response(obj)
  n <- nrow(res$feature_mat); p <- ncol(res$feature_mat)
@@ -10,10 +10,10 @@ dvisR_heatmap <- function(obj, reorder_feature = T, predictions = T, unlabeled =
  
  # remove unlabeled pairs if needed
  if(!unlabeled){
-  idx <- which(is.na(res$response_vec))
-  if(length(idx) > 0){
-   res$feature_mat <- res$feature_mat[-idx,,drop = F]
-   res$response_vec <- res$response_vec[-idx]
+  nonna_idx <- which(is.na(res$response_vec))
+  if(length(nonna_idx) > 0){
+   res$feature_mat <- res$feature_mat[-nonna_idx,,drop = F]
+   res$response_vec <- res$response_vec[-nonna_idx]
   }
  }
  
@@ -43,6 +43,11 @@ dvisR_heatmap <- function(obj, reorder_feature = T, predictions = T, unlabeled =
                       row_order = row_order, col_order = col_order, 
                       col_palette = col_palette, par_list = par_list)
  
+ if(!unlabeled){
+   list(row_order = as.numeric(c(1:n)[-nonna_idx][row_order]), col_order = col_order)
+ } else {
+   list(row_order = as.numeric(row_order), col_order = col_order)
+ }
 }
 
 heatmap_size_func_default <- function(vec){
@@ -95,7 +100,7 @@ heatmap_par_list_default <- function(col_pos = col_palette_default("green"),
  
  pos <- ordering[ordering %in% which(vec == 1)]
  neg <- ordering[ordering %in% which(vec == 0)]
- unlabel <- ordering[which(is.na(vec))]
+ unlabel <- ordering[ordering %in% which(is.na(vec))]
  
  tmp <- c(pos, neg, unlabel)
  names(tmp) <- c(rep("1", length(pos)), rep("0", length(neg)), rep("NA", length(unlabel)))
@@ -154,7 +159,14 @@ heatmap_par_list_default <- function(col_pos = col_palette_default("green"),
   num_pos <- length(which(response_vec == 1))
   graphics::lines(x = xlim, y = rep(ylim[2] - num_pos, 2),
                   col = pl$col_other, lwd = pl$lwd_separator, lty = pl$lty_separator)
+  
+  if(any(is.na(response_vec))){
+    num_neg <- length(which(response_vec == 0))
+    graphics::lines(x = xlim, y = rep(ylim[2] - num_pos - num_neg, 2),
+                    col = pl$col_other, lwd = pl$lwd_separator, lty = pl$lty_separator)
+  }
  }
+ 
  
  
  invisible()
@@ -163,13 +175,15 @@ heatmap_par_list_default <- function(col_pos = col_palette_default("green"),
 .plot_response <- function(vec, row_order, col_order, par_list, ylim, offset = 0, width = 1){
  pl <- par_list
  
+ vec <- vec[row_order]
+ 
  #draw the response
  for(i in 1:length(row_order)){
-  if(is.na(vec[row_order[i]])){
+  if(is.na(vec[i])){
    col <- pl$col_na
-  } else if(vec[row_order[i]] == 1){
+  } else if(vec[i] == 1){
    col <- pl$col_pos
-  } else if(vec[row_order[i]] == 0){
+  } else if(vec[i] == 0){
    col <- pl$col_neg
   } else {
    stop()
