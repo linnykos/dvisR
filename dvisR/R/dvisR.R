@@ -101,8 +101,8 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
  }
  
  # learn classifier
- classifier <- system_options$classifier(data = feature_mat[which(!is.na(response_vec)),], 
-                                         label = response_vec[which(!is.na(response_vec))])
+ fit_classifier <- system_options$classifier$learn(data = feature_mat[which(!is.na(response_vec)),], 
+                                                   label = response_vec[which(!is.na(response_vec))])
  
  # prepare output
  feature_mat <- .clean_feature_matrix(feature_mat)
@@ -110,7 +110,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
  response_vec <- .clean_response_vec(response_vec, feature_mat)
  round_vec <- .clean_response_vec(round_vec, feature_mat)
  
- .construct_dvisR(feature_mat, response_vec, pairs_mat, round_vec, n, p, classifier, so)
+ .construct_dvisR(feature_mat, response_vec, pairs_mat, round_vec, n, p, fit_classifier, fl, so)
 }
 
 ####################

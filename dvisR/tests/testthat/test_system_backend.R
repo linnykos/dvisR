@@ -3,7 +3,7 @@ context("Test system backend")
 ## .check_system_options is correct
 
 test_that(".check_system_options works", {
- classifier <- classifier_xgboost_closure()
+ classifier <- classifier_xgboost
  ntrials <- 5
  learner_list <- list(first_learner = learner_furtherest_distance, 
                      second_learner = learner_furtherest_distance)

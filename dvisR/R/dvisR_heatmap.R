@@ -1,7 +1,6 @@
 # WARNING: Add feature_spacing eventually, add feature names, etc.
 dvisR_heatmap <- function(obj, reorder_feature = T, predictions = T, unlabeled = F,
                           size_func = heatmap_size_func_default,
-                          prediction_func = predict_xgboost_wrapper,
                           ylab = NA, par_list = heatmap_par_list_default()){
  
  res <- .extract_mat_response(obj)
@@ -31,7 +30,7 @@ dvisR_heatmap <- function(obj, reorder_feature = T, predictions = T, unlabeled =
  
  # compute predictions
  if(predictions){
-  tmp <- prediction_func(obj$classifier, res$feature_mat)
+  tmp <- obj$system_options$classifier$predict(obj$fit_classifier, res$feature_mat)
   pred_vec <- rep(0, length(tmp))
   pred_vec[tmp >= 1/2] <- 1
  } else {
@@ -65,11 +64,11 @@ heatmap_size_func_default <- function(vec){
  size_vec/max(abs(size_vec))
 }
 
-heatmap_par_list_default <- function(col_pos = col_palette_default("green"),
-                                     col_neg = col_palette_default("orange"),
+heatmap_par_list_default <- function(col_pos = col_palette_default("teal"),
+                                     col_neg = col_palette_default("red"),
                                      col_na = col_palette_default("gray"),
-                                     col_big =  col_palette_default("teal"),
-                                     col_small =  col_palette_default("red"),
+                                     col_big =  col_palette_default("green"),
+                                     col_small =  col_palette_default("orange"),
                                      col_bg = col_palette_default("beige"),
                                      col_other = col_palette_default("black"),
                                      max_size = 0.95,

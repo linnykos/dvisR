@@ -27,6 +27,7 @@
  lis
 }
 
+# include parallel backend
 # extract pairs of columns in pairs, and then apply the features
 .extract_features <- function(dat, pairs_mat, feature_list){
   stopifnot(ncol(pairs_mat) == 2, max(pairs_mat) <= ncol(dat), 

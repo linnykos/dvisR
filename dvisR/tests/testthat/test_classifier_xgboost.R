@@ -8,7 +8,7 @@ test_that("classifier_xgboost_closure works", {
  data <- matrix(stats::rnorm(200), 200, 10)
  label <- rep(c(0,1), each = 100)
  
- res <- classifier_xgboost_closure(verbose = 0)(data, label)
+ res <- classifier_xgboost$learn(data, label)
  
  expect_true(class(res) == "xgb.Booster")
 })
@@ -23,10 +23,10 @@ test_that("predict_xgboost_wrapper works", {
  data <- matrix(stats::rnorm(200), 200, 10)
  label <- rep(c(0,1), each = 100)
  
- classifier <- classifier_xgboost_closure(verbose = 0)(data, label)
+ classifier <- classifier_xgboost$learn(data, label)
  newdata <- matrix(stats::rnorm(40), 4, 10)
  
- res <- predict_xgboost_wrapper(classifier, newdata)
+ res <- classifier_xgboost$predict(classifier, newdata)
  
  expect_true(is.numeric(res))
  expect_true(length(res) == nrow(newdata))

@@ -1,4 +1,4 @@
-system_options_default <- function(classifier = classifier_xgboost_closure(), ntrials = 20,
+system_options_default <- function(classifier = classifier_xgboost, ntrials = 20,
                                    learner_list = list(first_learner = learner_furtherest_distance, 
                                                        second_learner = learner_furtherest_distance),
                                    learner_options = list(first_learner = NA, 
@@ -15,7 +15,8 @@ system_options_default <- function(classifier = classifier_xgboost_closure(), nt
 ######################
 
 .check_system_options <- function(classifier, ntrials, learner_list, learner_options, new_pairs_per_round, minimum_instances_first_phase){
- stopifnot(is.function(classifier), all(sapply(learner_list, is.function)))
+ stopifnot(is.list(classifier), class(classifier) == "dvisR_classifier")
+ stopifnot(all(sapply(learner_list, is.function)))
  stopifnot(length(ntrials) == 1, ntrials > 0, ntrials %% 1 == 0)
    
  stopifnot(length(new_pairs_per_round) == 2, is.numeric(new_pairs_per_round), !is.matrix(new_pairs_per_round),
