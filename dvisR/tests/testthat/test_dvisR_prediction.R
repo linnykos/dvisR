@@ -44,7 +44,7 @@ test_that("dvisR_prediction works", {
  expect_true(all(colnames(res$df) == colnames(obj$df)))
  expect_true(all(res$probability >= 0))
  expect_true(all(res$probability <= 1))
- expect_true(all(res$prediction %in% c("n", "y")))
+ expect_true(all(res$prediction %in% c(0, 1)))
 })
 
 test_that("dvisR_prediction correctly labels 'y' as dependency", {
@@ -63,9 +63,9 @@ test_that("dvisR_prediction correctly labels 'y' as dependency", {
  
  expected_res <- sapply(1:nrow(res$df), function(x){
   idx1 <- res$df[x,"Idx1"]; idx2 <- res$df[x,"Idx2"]
-  ifelse(sig_mat[idx1,idx2] > 0.1, "y", "n") 
+  ifelse(sig_mat[idx1,idx2] > 0.1, 1, 0) 
  })
  
- stopifnot(all(as.character(res$prediction) == expected_res))
+ expect_true(all(res$prediction == expected_res))
 })
 

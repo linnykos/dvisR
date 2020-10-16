@@ -5,6 +5,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
                          plotting_module = plotting_module_base,
                          debugging_inputs = NA, verbose = 1, ...){
  
+ save_par_list <- graphics::par()
  if(!all(is.na(cluster_labels))) {
    stopifnot(nrow(dat) == length(cluster_labels))
    if(length(plotting_options$color_palette) == 1){
@@ -110,6 +111,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
  response_vec <- .clean_response_vec(response_vec, feature_mat)
  round_vec <- .clean_response_vec(round_vec, feature_mat)
  
+ .restore_par(save_par_list)
  .construct_dvisR(feature_mat, response_vec, pairs_mat, round_vec, n, p, fit_classifier, fl, so)
 }
 

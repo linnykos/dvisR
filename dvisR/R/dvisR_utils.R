@@ -11,7 +11,7 @@
 }
 
 .extract_mat_response <- function(obj){
- stopifnot(class(obj) == "dvisR", "df" %in% names(obj))
+ stopifnot(class(obj) %in% c("dvisR", "dvisR_prediction"), "df" %in% names(obj))
  
  response_idx <- which(names(obj$df) == "Response")
  pairs_idx <- which(names(obj$df) %in% c("Idx1", "Idx2"))
@@ -47,5 +47,11 @@
    as.numeric(str)
 }
 
+.restore_par <- function(par_list){
+   graphics::par(mar = par_list$mar)
+   graphics::par(mfrow = par_list$mfrow)
+   
+   invisible()
+}
 
 

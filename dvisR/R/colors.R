@@ -23,10 +23,10 @@ col_palette_default <- function(input = NA){
 .color_df <- function(){
  col_vec <- c('#8DD3C7', '#FFED6F', '#BEBADA', '#FB8072', '#80B1D3', 
               '#FDB462', '#B3DE69', '#BC80BD', '#FCCDE5', '#D9D9D9', 
-              '#CCEBC5', '#FFFFB3', '#F2EDDA', '#000000')
+              '#CCEBC5', '#FFFFB3', '#F2EDDA', '#000000', '#FFFFFF')
  col_name <- c('teal', 'yellow', 'purple', 'red', 'blue', 
                'orange', 'green', 'magenta', 'pink', 'gray',
-               'lightgreen', 'lightyellow', 'beige', 'black')
+               'lightgreen', 'lightyellow', 'beige', 'black', 'white')
  
  df <- data.frame(col = col_vec, name = col_name)
  df

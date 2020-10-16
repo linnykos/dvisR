@@ -11,6 +11,7 @@ r_binary_packages:
     - xgboost
     - uwot
     - plyr
+    - igraph
 
 after_success:
   - Rscript -e 'library(covr); codecov()'

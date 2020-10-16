@@ -1,6 +1,6 @@
 Package: dvisR
 Title: Dependency Visualization
-Version: 0.0.0.0005
+Version: 0.0.0.0007
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
 Description: An interactive system to visualize complex dependencies within the data.
 Depends:
@@ -13,7 +13,8 @@ Imports:
     hash,
     xgboost,
     uwot,
-    plyr
+    plyr,
+    igraph
 Suggests:
     testthat
 RoxygenNote: 7.1.1

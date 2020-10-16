@@ -2,7 +2,7 @@
 dvisR_heatmap <- function(obj, reorder_feature = T, predictions = T, unlabeled = F,
                           size_func = heatmap_size_func_default,
                           ylab = NA, par_list = heatmap_par_list_default()){
- 
+
  res <- .extract_mat_response(obj)
  n <- nrow(res$feature_mat); p <- ncol(res$feature_mat)
  pl <- par_list
@@ -40,6 +40,7 @@ dvisR_heatmap <- function(obj, reorder_feature = T, predictions = T, unlabeled =
  # draw the plot
  .draw_feature_matrix(mat = size_mat, response_vec = res$response_vec, pred_vec = pred_vec,
                       row_order = row_order, col_order = col_order, par_list = par_list)
+
  
  if(!unlabeled){
    list(row_order = as.numeric(c(1:n)[-nonna_idx][row_order]), col_order = col_order)
