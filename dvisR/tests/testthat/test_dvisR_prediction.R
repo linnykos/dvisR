@@ -39,7 +39,7 @@ test_that("dvisR_prediction works", {
  
  expect_true(is.list(res))
  expect_true(class(res) == "dvisR_prediction")
- expect_true(all(sort(names(res)) == sort(c("df", "probability", "prediction"))))
+ expect_true(all(sort(names(res)) == sort(c("df", "probability", "prediction", "dim"))))
  expect_true(all(dim(res$df) == c(p*(p-1)/2, ncol(obj$df))))
  expect_true(all(colnames(res$df) == colnames(obj$df)))
  expect_true(all(res$probability >= 0))

@@ -21,7 +21,7 @@ dvisR_prediction <- function(obj, dat, ncores = NA){
  pred_vec[prob_vec >= 1/2] <- 1
  
  # return
- structure(list(df = rbind(obj$df, df_new), probability = prob_vec, prediction = pred_vec),
+ structure(list(df = rbind(obj$df, df_new), probability = prob_vec, prediction = pred_vec, dim = obj$dim),
            class = "dvisR_prediction")
 }
 
