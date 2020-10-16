@@ -15,11 +15,11 @@ print.dvisR <- function(x, verbose = 0, ...){
   if(verbose == 1){
    cat("\n--------\n")
    cat("Partial head of df:\n")
-   print(head(x$df[,1:min(ncol(x$df), 6)]))
+   print(utils::head(x$df[,1:min(ncol(x$df), 6)]))
   } else if(verbose == 2){
    cat("\n--------\n")
    cat("Full head of df:\n")
-   print(head(x$df))
+   print(utils::head(x$df))
   }
  } else {
   sapply(x, print, verbose = verbose)

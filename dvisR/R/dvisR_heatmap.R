@@ -39,8 +39,7 @@ dvisR_heatmap <- function(obj, reorder_feature = T, predictions = T, unlabeled =
  
  # draw the plot
  .draw_feature_matrix(mat = size_mat, response_vec = res$response_vec, pred_vec = pred_vec,
-                      row_order = row_order, col_order = col_order, 
-                      col_palette = col_palette, par_list = par_list)
+                      row_order = row_order, col_order = col_order, par_list = par_list)
  
  if(!unlabeled){
    list(row_order = as.numeric(c(1:n)[-nonna_idx][row_order]), col_order = col_order)
@@ -54,7 +53,7 @@ heatmap_size_func_default <- function(vec){
  stopifnot(length(idx) != 0)
  
  mean_val <- mean(vec[idx])
- sd_val <- sd(vec[idx])
+ sd_val <- stats::sd(vec[idx])
  
  if(length(idx) != length(vec)){
   vec[-idx] <- mean_val
@@ -107,8 +106,7 @@ heatmap_par_list_default <- function(col_pos = col_palette_default("teal"),
 }
 
 .draw_feature_matrix <- function(mat, response_vec, pred_vec,
-                                 row_order, col_order, 
-                                 col_palette, par_list){
+                                 row_order, col_order, par_list){
  
  stopifnot(length(col_order) == ncol(mat), length(row_order) == nrow(mat))
  pl <- par_list

@@ -1,12 +1,12 @@
 # add parallel backend
-dvisR_prediction <- function(obj, newdata, ncores = NA){
+dvisR_prediction <- function(obj, dat, ncores = NA){
  # check
- stopifnot(all(dim(newdata) == c(obj$dim["n"], obj$dim["p"])))
+ stopifnot(all(dim(dat) == c(obj$dim["n"], obj$dim["p"])))
  p <- obj$dim["p"]
  
  # enumerate the entire df
  res <- .extract_mat_response(obj)
- res_new <- .compute_complete_feature_mat(obj$df[,c("Idx1", "Idx2")], newdata, feature_list = obj$feature_list)
+ res_new <- .compute_remaining_feature_mat(obj$df[,c("Idx1", "Idx2")], dat, feature_list = obj$feature_list)
  fm_total <- rbind(res$feature_mat, res_new$feature_mat)
  
  stopifnot(nrow(fm_total) == p*(p-1)/2)
@@ -17,16 +17,18 @@ dvisR_prediction <- function(obj, newdata, ncores = NA){
  # apply the classifier
  # can also be parallelized
  prob_vec <-  obj$system_options$classifier$predict(obj$fit_classifier, fm_total)
- pred_vec <- rep(0, length(prob_vec))
- pred_vec[prob_vec >= 1/2] <- 1
+ pred_vec <- rep("n", length(prob_vec))
+ pred_vec[prob_vec >= 1/2] <- "y"
+ pred_vec <- as.factor(pred_vec)
  
  # return
- list(df = rbind(obj$df, df_new), probability = prob_vec, prediction = pred_vec)
+ structure(list(df = rbind(obj$df, df_new), probability = prob_vec, prediction = pred_vec),
+           class = "dvisR_prediction")
 }
 
 ####################
 
-.compute_complete_feature_mat <- function(existing_pairs_mat, dat, feature_list){
+.compute_remaining_feature_mat <- function(existing_pairs_mat, dat, feature_list){
  p <- ncol(dat)
  combn_mat <- utils::combn(p, 2)
  

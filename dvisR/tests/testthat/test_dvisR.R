@@ -1,7 +1,6 @@
 context("Test dvisR")
 
 
-
 ######################
 
 ## .response_handler_first_phase is correct

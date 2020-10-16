@@ -131,7 +131,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
    xlab <- ""; ylab <- ""
   }
   
-  if(length(cluster_labels) == 1 && all(is.na(cluster_labels))){
+  if(all(is.na(cluster_labels))){
    color_vec <- rep(plotting_options$color_palette[1], nrow(dat))
   } else{
    color_vec <- plotting_options$color_palette[cluster_labels]
@@ -160,7 +160,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
     xlab <- ""; ylab <- ""
   }
   
-  if(length(cluster_labels) == 1 && all(is.na(cluster_labels))){
+  if(all(is.na(cluster_labels))){
     color_vec <- rep(plotting_options$color_palette[1], nrow(dat))
   } else{
     color_vec <- plotting_options$color_palette[cluster_labels]
