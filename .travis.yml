@@ -9,11 +9,16 @@ r_binary_packages:
     - MASS
     - hash
     - xgboost
-    - uwot
     - plyr
     - igraph
+
+r_packages:
+    - devtools
+    - uwot
 
 after_success:
   - Rscript -e 'library(covr); codecov()'
 
 warnings_are_errors: true
+r_build_args: --no-build-vignettes --no-manual --no-resave-data
+r_check_args: --no-build-vignettes --no-manual
