@@ -1,5 +1,5 @@
 dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
-                         feature_list = .grab_functions_in_package(),
+                         feature_list = grab_dependency_functions(num_clusters = max(cluster_labels)),
                          system_options = system_options_default(), 
                          plotting_options = plotting_options_default(),  
                          plotting_module = plotting_module_base,
@@ -20,8 +20,9 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
  
  # preprocessing, initialization stuff
  hash_pairs <- .initialize_hash(); hash_na <- .initialize_na_handler()
- feature_mat <- .initialize_feature_matrix(so$ntrials, so$new_pairs_per_round,
-                                           so$min_inst, names(fl))
+ template_vec <- .determine_feature_template(dat, cluster_labels, fl)
+ feature_mat <- .initialize_feature_matrix(template_vec, so$ntrials, so$new_pairs_per_round,
+                                           so$min_inst)
  pairs_mat <- matrix(NA, nrow = 0, ncol = 2)
  response_vec <- rep(NA, nrow(feature_mat))
  round_vec <- rep(NA, nrow(feature_mat))
@@ -46,7 +47,7 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
   pairs_mat_new <- .generate_new_pairs(p, so$new_pairs_per_round[phase_idx], hash_pairs)
   
   # extract features of new pairs
-  feature_mat_tmp <- .extract_features(dat, pairs_mat_new, fl)
+  feature_mat_tmp <- .extract_features(dat, cluster_labels, pairs_mat_new, fl)
   if(any(is.na(feature_mat_tmp))){
    feature_mat_tmp <- .clean_na(feature_mat_tmp, hash_na, offset = counter)
   }
