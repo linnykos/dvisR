@@ -39,4 +39,8 @@ dvisR_heatmap(res)
 dvisR_heatmap(res, unlabeled = T)
 
 dvisR_graph(pred_res, cluster_method = clustering_spectral(K = 4))
+tab <- xgboost::xgb.importance(model = res$fit_classifier)
+graphics::barplot(Gain ~ Feature, data = tab)
+
+graphics::hist(pred_res$probability, col = "gray")
 

@@ -1,5 +1,6 @@
 dvisR_graph <- function(obj, threshold = 0.5, col_palette = col_palette_default(),
-            cluster_method = clustering_spectral(K = 4), seed = NA){
+            cluster_method = clustering_spectral(K = 4), layout_func = igraph::layout_nicely,
+            seed = NA){
   stopifnot(class(obj) == "dvisR_prediction")
   
   if(!is.na(seed)) set.seed(seed)
@@ -17,7 +18,8 @@ dvisR_graph <- function(obj, threshold = 0.5, col_palette = col_palette_default(
   # WARNING: need a way to recycle colors if needed
   igraph::V(g)$color <- col_palette[clustering]
   
-  graphics::plot(g)
+  plotting_coord <- layout_func(g)
+  graphics::plot(g, layout = plotting_coord)
   
   # WARNING: I want a more graceful to handle the plotting options...
   # WARNING: return the clustering
