@@ -78,5 +78,3 @@ test_that("feature_spearman works", {
   expect_true(length(res) == 2)
   expect_true(all(names(res) == c("Spearman_range", "Spearman_std")))
 })
-
-

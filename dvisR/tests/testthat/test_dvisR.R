@@ -132,5 +132,19 @@ test_that("dvisR_system works", {
   expect_true(all(sort(names(res)) == sort(c("df", "dim", "cluster_labels", "fit_classifier", "feature_list", "system_options"))))
 })
 
+test_that("dvisR_system works with features respecting clusters", {
+  set.seed(10)
+  dat <- MASS::mvrnorm(n = 200, mu = rep(0, 50), Sigma = diag(50))
+  cluster_labels <- sample(c(1:3), size = 200, replace = T)
+  res <- dvisR_system(dat, cluster_labels = cluster_labels,
+                      feature_list = grab_dependency_functions(num_clusters = max(cluster_labels)),
+                      system_options = system_options_default(ntrials = 10, minimum_instances_first_phase = 4),
+                      debugging_inputs = list(round_inputs = list("1,2,3", "1,5,6", 
+                                                                  "y", "y", "y", "n", "y", "y", "n", "n", "n", "y")))
+  
+  expect_true(is.list(res))
+  expect_true(all(sort(names(res)) == sort(c("df", "dim", "cluster_labels", "fit_classifier", "feature_list", "system_options"))))
+})
+
 
 

@@ -23,10 +23,10 @@ test_that("grab_dependency_functions yields functions that work", {
 test_that("grab_dependency_functions yields functions that work with clusters", {
   set.seed(10)
   dat <- matrix(stats::rnorm(100), 50, 2)
-  cluster_label <- sample(c(1,2,3), 50, replace = T)
-  res <- grab_dependency_functions(num_clusters = max(cluster_label))
+  cluster_labels <- sample(c(1,2,3), 50, replace = T)
+  res <- grab_dependency_functions(num_clusters = max(cluster_labels))
   
-  val <- lapply(res, function(func){func(dat, cluster_label)})
+  val <- lapply(res, function(func){func(dat, cluster_labels)})
   
   expect_true(is.list(val))
   expect_true(all(sapply(val, is.numeric)))
@@ -62,6 +62,39 @@ test_that(".apply_feature_list has meaningful tryCatch", {
   expect_true(is.na(res[len+1]))
 })
 
+test_that(".apply_feature_list works with clusters", {
+  set.seed(10)
+  dat_2col <- matrix(rnorm(1:100), 50, 2)
+  cluster_labels <- sample(c(1,2,3), 50, replace = T)
+  feature_list <- grab_dependency_functions(num_clusters = max(cluster_labels))
+  
+  res <- .apply_feature_list(dat_2col, cluster_labels = cluster_labels, 
+                             feature_list = feature_list)
+  
+  expect_true(length(res) == length(feature_list)*3/2)
+  expect_true(all(is.numeric(res)))
+})
+
+test_that(".apply_feature_list gives reasonable values with clusters", {
+  set.seed(10)
+  cluster_labels <- sample(c(1,2), 50, replace = T)
+  dat_2col <- t(sapply(cluster_labels, function(x){
+    if(x == 1){
+      MASS::mvrnorm(n = 1, mu = rep(0,2), Sigma = diag(2))
+    } else {
+      MASS::mvrnorm(n = 1, mu = rep(10,2), Sigma = diag(2))
+    }
+  }))
+  feature_list <- grab_dependency_functions(num_clusters = max(cluster_labels))
+  
+  res <- .apply_feature_list(dat_2col, cluster_labels = cluster_labels, 
+                             feature_list = feature_list)
+  
+  expect_true(length(res) == length(feature_list)*3/2)
+  expect_true(max(c(res["Kendall_std"], res["Kendall_range"])) <= res["Kendall"]/2)
+  expect_true(max(c(res["Pearson_std"], res["Pearson_range"])) <= res["Pearson"]/2)
+  expect_true(max(c(res["Spearman_std"], res["Spearman_range"])) <= res["Spearman"]/2)
+})
 
 ########################
 
@@ -76,6 +109,21 @@ test_that(".extract_features works", {
   res <- .extract_features(dat, pairs_mat = pairs_mat, feature_list = feature_list)
   
   expect_true(all(dim(res) == c(nrow(pairs_mat), length(feature_list))))
+  expect_true(all(is.numeric(res)))
+})
+
+test_that(".extract_features works with clusters", {
+  set.seed(10)
+  dat <- matrix(rnorm(1:250), 50, 5)
+  cluster_labels <- sample(c(1,2,3), 50, replace = T)
+  feature_list <- grab_dependency_functions(num_clusters = max(cluster_labels))
+  pairs_mat <- matrix(c(1,2, 3,4, 1,5), nrow = 3, ncol = 2, byrow = T)
+  
+  res <- .extract_features(dat, cluster_labels = cluster_labels,
+                           pairs_mat = pairs_mat, feature_list = feature_list)
+  
+  expect_true(ncol(res) == length(feature_list)*3/2)
+  expect_true(nrow(res) == nrow(pairs_mat))
   expect_true(all(is.numeric(res)))
 })
 
