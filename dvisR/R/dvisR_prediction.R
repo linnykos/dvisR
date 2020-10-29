@@ -6,7 +6,9 @@ dvisR_prediction <- function(obj, dat, ncores = NA){
  
  # enumerate the entire df
  res <- .extract_mat_response(obj)
- res_new <- .compute_remaining_feature_mat(obj$df[,c("Idx1", "Idx2")], dat, feature_list = obj$feature_list)
+ res_new <- .compute_remaining_feature_mat(obj$df[,c("Idx1", "Idx2")], dat, 
+                                           cluster_labels = obj$cluster_labels,
+                                           feature_list = obj$feature_list)
  fm_total <- rbind(res$feature_mat, res_new$feature_mat)
  
  stopifnot(nrow(fm_total) == p*(p-1)/2)
@@ -27,7 +29,8 @@ dvisR_prediction <- function(obj, dat, ncores = NA){
 
 ####################
 
-.compute_remaining_feature_mat <- function(existing_pairs_mat, dat, feature_list){
+.compute_remaining_feature_mat <- function(existing_pairs_mat, dat, cluster_labels = rep(1, nrow(dat)), 
+                                           feature_list){
  p <- ncol(dat)
  combn_mat <- utils::combn(p, 2)
  
@@ -38,7 +41,7 @@ dvisR_prediction <- function(obj, dat, ncores = NA){
  stopifnot(sum(bool_vec) == nrow(existing_pairs_mat))
  new_pairs_mat <- t(combn_mat[,!bool_vec])
  
- feature_mat <- .extract_features(dat, new_pairs_mat, feature_list)
+ feature_mat <- .extract_features(dat, cluster_labels, new_pairs_mat, feature_list)
  
  list(pairs_mat = new_pairs_mat, feature_mat = feature_mat)
 }

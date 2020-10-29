@@ -11,7 +11,9 @@ test_that(".compute_remaining_feature_mat works", {
                                                                  "y", "y", "y", "n", "y", "y", "n", "n", "n", "y")))
  
  tmp <- .extract_mat_response(obj)
- res <- .compute_remaining_feature_mat(obj$df[,c("Idx1", "Idx2")], dat, feature_list = obj$feature_list)
+ res <- .compute_remaining_feature_mat(obj$df[,c("Idx1", "Idx2")], dat, 
+                                       cluster_labels = obj$cluster_labels,
+                                       feature_list = obj$feature_list)
  
  expect_true(is.list(res))
  expect_true(length(res) == 2)

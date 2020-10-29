@@ -113,7 +113,8 @@ dvisR_system <- function(dat, cluster_labels = rep(NA, nrow(dat)),
  round_vec <- .clean_response_vec(round_vec, feature_mat)
  
  .restore_par(save_par_list)
- .construct_dvisR(feature_mat, response_vec, pairs_mat, round_vec, n, p, fit_classifier, fl, so)
+ .construct_dvisR(feature_mat, response_vec, pairs_mat, cluster_labels,
+                  round_vec, n, p, fit_classifier, fl, so)
 }
 
 ####################

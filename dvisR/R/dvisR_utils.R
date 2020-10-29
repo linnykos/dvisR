@@ -23,8 +23,8 @@
 }
 
 
-.construct_dvisR <- function(feature_mat, response_vec, pairs_mat, round_vec, 
-                             n, p, 
+.construct_dvisR <- function(feature_mat, response_vec, pairs_mat, cluster_labels,
+                             round_vec, n, p, 
                              fit_classifier, feature_list, system_options){
    stopifnot(nrow(feature_mat) == length(response_vec), length(response_vec) == nrow(pairs_mat))
    
@@ -32,7 +32,8 @@
    colnames(df) <- c("Idx1", "Idx2", "Response", "Round", colnames(feature_mat))
    dim_vec <- c(n,p); names(dim_vec) <- c("n", "p")
    
-   structure(list(df = df, fit_classifier = fit_classifier, dim = dim_vec,
+   structure(list(df = df, cluster_labels = cluster_labels,
+                  fit_classifier = fit_classifier, dim = dim_vec,
                   feature_list = feature_list, system_options = system_options), class = "dvisR")
 }
 

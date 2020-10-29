@@ -28,7 +28,7 @@ grab_dependency_functions <- function(package_name = "dvisR",
 
 # include parallel backend
 # extract pairs of columns in pairs, and then apply the features
-.extract_features <- function(dat, cluster_labels, pairs_mat, feature_list){
+.extract_features <- function(dat, cluster_labels = rep(1, nrow(dat_2col)), pairs_mat, feature_list){
   stopifnot(ncol(pairs_mat) == 2, max(pairs_mat) <= ncol(dat), 
             all(pairs_mat %% 1 == 0), min(pairs_mat) > 0)
   
@@ -41,12 +41,15 @@ grab_dependency_functions <- function(package_name = "dvisR",
   t(mat_new)
 }
 
-.apply_feature_list <- function(dat_2col, cluster_labels, feature_list){
+.apply_feature_list <- function(dat_2col, cluster_labels = rep(1, nrow(dat_2col)), 
+                                feature_list){
   value_list <- lapply(feature_list, function(feature_func){
     tryCatch({
       feature_func(dat_2col, cluster_labels)
     }, error = function(e){
-      NA
+      val <- NA
+      names(val) <- "tmp"
+      val
     })
   })
   

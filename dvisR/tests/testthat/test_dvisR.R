@@ -129,7 +129,7 @@ test_that("dvisR_system works", {
                                                                   "y", "y", "y", "n", "y", "y", "n", "n", "n", "y")))
   
   expect_true(is.list(res))
-  expect_true(all(sort(names(res)) == sort(c("df", "dim", "fit_classifier", "feature_list", "system_options"))))
+  expect_true(all(sort(names(res)) == sort(c("df", "dim", "cluster_labels", "fit_classifier", "feature_list", "system_options"))))
 })
 
 
