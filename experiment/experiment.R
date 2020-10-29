@@ -10,6 +10,7 @@ res <- dvisR::dvisR_system(dat, cluster_labels = cluster_labels,
                            debugging_inputs = list(round_inputs = list("3,4,5,6", 
                                                                        "n","y","n","y","y",  "y","y","y","y","n")))
 res_safe <- res
+head(res$df)
 
 # plot the feature-pairs that the system touched
 par(mfrow = c(1,2))
@@ -26,6 +27,15 @@ dvisR_embedding(pred_res, embedding_method = embedding_umap, seed = 1, main = "P
 dvisR_embedding(pred_res, embedding_method = embedding_umap, quantity_plotted = "probability", seed = 1,
                 main = "Predicted labels", legend = embedding_legend(x = "bottomleft", cex = 0.5))
 
+# we can also plot predictions, with varying prediction threshold
+par(mfrow = c(1,2))
+dvisR_embedding(pred_res, embedding_method = embedding_umap, seed = 1, main = "Provided labels", 
+                legend = embedding_legend(x = "bottomleft", cex = 0.5))
+dvisR_embedding(pred_res, embedding_method = embedding_umap, quantity_plotted = "prediction", 
+                prediction_threshold = 0.7, seed = 1,
+                main = "Predicted labels", legend = embedding_legend(x = "bottomleft", cex = 0.5))
+
+
 # we can also highlight specific variables
 par(mfrow = c(1,2))
 dvisR_embedding(pred_res, embedding_method = embedding_umap, highlight_variable = 2, seed = 1, 
@@ -39,6 +49,8 @@ dvisR_heatmap(res)
 dvisR_heatmap(res, unlabeled = T)
 
 dvisR_graph(pred_res, cluster_method = clustering_spectral(K = 4))
+
+par(mar = c(5,4,4,2), mfrow = c(1,1))
 tab <- xgboost::xgb.importance(model = res$fit_classifier)
 graphics::barplot(Gain ~ Feature, data = tab)
 

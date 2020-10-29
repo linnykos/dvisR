@@ -24,7 +24,7 @@ dvisR_embedding <- function(obj, embedding_method = embedding_pca, highlight_var
   
   # compute predictions, if needed
   ## OPTIMIZE THIS PART (don't need to compute all the predictions)
-  if(quantity_plotted == "probability"){
+  if(quantity_plotted %in% c("probability", "prediction")){
     prob_bin <- seq(0, 1, length.out = 2*col_levels)
     prob_midpoint <- sapply(2:length(prob_bin), function(i){mean(prob_bin[c(i-1,i)])})
     
@@ -43,7 +43,7 @@ dvisR_embedding <- function(obj, embedding_method = embedding_pca, highlight_var
       which.min(abs(prob_vec[i] - prob_midpoint))
     })
   } else {
-    tmp <- as.numeric((prob_vec >= prediction_threshold))+1
+    tmp <- plyr::mapvalues(as.numeric((prob_vec >= prediction_threshold)), c(0,1), c(2,3))
   }
   
   # set all points not related to highlight_variable to be gray
@@ -59,7 +59,7 @@ dvisR_embedding <- function(obj, embedding_method = embedding_pca, highlight_var
   }
   
   # determine color palette 
-  if(quantity_plotted == "decision") {
+  if(quantity_plotted %in% c("decision", "prediction")) {
     col_vec <- col_palette[tmp]
   } else {
     new_palette <- c(grDevices::colorRampPalette(c(col_palette[2], col_palette[1]))(col_levels),
