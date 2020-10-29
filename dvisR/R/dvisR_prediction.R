@@ -19,11 +19,9 @@ dvisR_prediction <- function(obj, dat, ncores = NA){
  # apply the classifier
  # can also be parallelized
  prob_vec <-  obj$system_options$classifier$predict(obj$fit_classifier, fm_total)
- pred_vec <- rep(0, length(prob_vec))
- pred_vec[prob_vec >= 1/2] <- 1
  
  # return
- structure(list(df = rbind(obj$df, df_new), probability = prob_vec, prediction = pred_vec, dim = obj$dim),
+ structure(list(df = rbind(obj$df, df_new), probability = prob_vec, dim = obj$dim),
            class = "dvisR_prediction")
 }
 

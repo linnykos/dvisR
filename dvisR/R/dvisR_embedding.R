@@ -1,6 +1,7 @@
 # works for both dvisR and dvisR_prediction objects
 dvisR_embedding <- function(obj, embedding_method = embedding_pca, highlight_variable = NA,
                             quantity_plotted = "decision",
+                            prediction_threshold = .5,
                             col_palette = col_palette_default(c("gray", "red", "teal")),
                             col_levels = 5,
                             plotting_module = plotting_module_base, 
@@ -9,7 +10,7 @@ dvisR_embedding <- function(obj, embedding_method = embedding_pca, highlight_var
                             xlab = "Latent dimension 1", ylab = "Latent dimension 2", 
                             main = "", ...){
   stopifnot(class(obj) %in% c("dvisR", "dvisR_prediction"))
-  stopifnot(quantity_plotted %in% c("decision", "probability"))
+  stopifnot(quantity_plotted %in% c("decision", "probability", "prediction"))
   
   stopifnot(is.function(legend) || is.na(legend))
   stopifnot(all(is.na(highlight_variable)) || all(is.numeric(highlight_variable)))
@@ -37,12 +38,15 @@ dvisR_embedding <- function(obj, embedding_method = embedding_pca, highlight_var
   # determine coloring of points
   if(quantity_plotted == "decision"){
     tmp <-  plyr::mapvalues(res$response_vec, from = c(NA, 0, 1), to = c(1, 2, 3))
-  } else {
+  } else if(quantity_plotted == "probability") {
     tmp <- sapply(1:length(res$response_vec), function(i){
       which.min(abs(prob_vec[i] - prob_midpoint))
     })
+  } else {
+    tmp <- as.numeric((prob_vec >= prediction_threshold))+1
   }
   
+  # set all points not related to highlight_variable to be gray
   if(any(!is.na(highlight_variable))){
     highlight_idx <- which(apply(res$pairs_mat, 1, function(x){any(x %in% highlight_variable)}))
     if(length(highlight_idx) > 0){
