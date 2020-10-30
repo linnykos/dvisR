@@ -1,5 +1,5 @@
 # works for both dvisR and dvisR_prediction objects
-dvisR_embedding <- function(obj, embedding_method = embedding_pca, highlight_variable = NA,
+dvisR_embedding <- function(obj, embedding_method = embedding_umap_closure(), highlight_variable = NA,
                             quantity_plotted = "decision",
                             prediction_threshold = .5,
                             col_palette = col_palette_default(c("gray", "red", "teal")),
@@ -93,8 +93,10 @@ embedding_pca <- function(mat, ...){
   res$x[,1:2]
 }
 
-embedding_umap <- function(mat, ...){
-  uwot::umap(mat, ...)[,1:2]
+embedding_umap_closure <- function(...){
+  function(mat){
+    uwot::umap(mat, ...)[,1:2]
+  }
 }
 
 embedding_legend <- function(x = "topleft", y = NULL, legend = c("Undecided", "No", "Yes"),
